@@ -3,7 +3,7 @@ module Kolekt; module Reporters; class Base
   end
 
   # Stupid by default
-  def wants dry_payload
+  def wants identifier, dry_payload
     true
   end
 

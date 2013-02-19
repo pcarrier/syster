@@ -39,7 +39,7 @@ module Kolekt; class Engine
     @sources.select { |_, c| c == SourceCondition::READY }.each do |src, _|
       instance = src.new
       dry = instance.dry
-      if dry.first and !reporter.wants dry[1..-1]
+      if dry.first and !reporter.wants src.identifier, dry[1..-1]
         @sources[src] = SourceCondition::DRYED_OUT
       else
         success, payload = instance.collect
