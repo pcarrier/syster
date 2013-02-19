@@ -23,6 +23,6 @@ optparse = OptionParser.new do |opts|
   end
 end
 
-reporter = options[:reporter].new
+reporter = options[:reporter].new options
 engine = Kolekt::Engine.new options
 engine.run reporter

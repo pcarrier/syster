@@ -10,6 +10,9 @@ module Kolekt
         self.name.sub(/^.*::/, '').downcase
       end
 
+      def initialize options={}
+      end
+
       def report name, payload
       end
 

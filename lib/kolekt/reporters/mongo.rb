@@ -12,7 +12,7 @@ module Kolekt::Reporters
       end
     end
   
-    def initialize
+    def initialize params={}
       require 'mongo'
 
       @client = ::Mongo::MongoClient.new
