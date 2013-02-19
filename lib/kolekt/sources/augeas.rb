@@ -15,8 +15,8 @@ module Kolekt; module Sources; class Augeas < Base
     begin
       res = nil
       ::Augeas::open '/', nil, ::Augeas::NO_LOAD do |aug|
-        # Those lenses create too much noise
-        %w[Services Protocols].each do |lens|
+        # Those lenses create too much noise or are somewhat broken for us
+        %w[Services Protocols Xml].each do |lens|
           aug.rm "/augeas/load/#{lens}"
         end
 
@@ -48,18 +48,28 @@ module Kolekt; module Sources; class Augeas < Base
 
   private
   def makeHash aug, path
-    res = {}
-    # Filter out comments
-    aug.match(%[#{path}/*[label()!="#comment"]]).each do |cpath|
-      name = File.basename cpath
-      v = aug.get cpath
-      h = makeHash aug, cpath
+    children = aug.match(%[#{path}/*[label()!="#comment"]])
 
-      if name =~ /(.*)\[(\d+)\]/
-        res[$1] ||= []
-        res[$1][$2.to_i - 1] = mix(h, v, cpath)
-      else
-        res[name] = mix h, v, cpath
+    if children.all? {|c| c =~ /^\d+$/} # array
+      res = []
+      children.each do |cpath|
+        index = File.basename(cpath).to_i
+        res[index] = makeHash aug, cpath
+      end
+    else # not array
+      res = {}
+      # Filter out comments
+      children.each do |cpath|
+        name = File.basename cpath
+        v = aug.get cpath
+        h = makeHash aug, cpath
+
+        if name =~ /(.*)\[(\d+)\]/
+          res[$1] ||= []
+          res[$1][$2.to_i - 1] = mix(h, v, cpath)
+        else
+          res[name] = mix h, v, cpath
+        end
       end
     end
     
