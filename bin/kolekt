@@ -1,0 +1,28 @@
+#!/usr/bin/env ruby
+
+require 'kolekt/reporters'
+require 'kolekt/engine'
+require 'optparse'
+
+options = {
+  :reporter => Kolekt::Reporters::Console,
+  :excludes => []
+}
+
+optparse = OptionParser.new do |opts|
+  opts.banner = "Usage: kolekt [--exclude exclude..]\n" \
+    "  Report host information"
+  opts.on '-r', '--reporter', 'Use a reporter' do |r|
+    options[:reporter] = Kolekt::Reporters.available[r]
+  end
+  opts.on '-e', '--exclude', 'Exclude a source by identifier' do |e|
+    options[:excludes] << e
+  end
+  opts.on '-E', '--exclude-regexp', 'Exclude sources by regexp' do |p|
+    options[:excludes] << Regexp.new(p)
+  end
+end
+
+reporter = options[:reporter].new
+engine = Kolekt::Engine.new options
+engine.run reporter

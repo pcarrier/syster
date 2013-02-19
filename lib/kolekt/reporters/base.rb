@@ -1,14 +1,25 @@
-module Kolekt; module Reporters
-  class Base
-    def report name, payload
-    end
+module Kolekt
+  module Reporters
+    class Base
+      # Guard execution (in case of missing gems, binaries, etc.)
+      def self.runnable?
+        true
+      end
 
-    # Stupid by default
-    def wants identifier, dry_payload
-      true
-    end
+      def self.identifier
+        self.name.sub(/^.*::/, '').downcase
+      end
 
-    def finish
+      def report name, payload
+      end
+
+      # Stupid by default
+      def wants identifier, dry_payload
+        true
+      end
+
+      def finish
+      end
     end
   end
 end

@@ -22,7 +22,7 @@ module Kolekt
       Kolekt::Sources.available.each do |src|
         id = src.identifier
 
-        if options[:exclude] and options[:exclude].find {|e| e === id}
+        if options[:excludes] and options[:excludes].find {|e| e === id}
           @sources[src] = SourceCondition::EXCLUDED
         elsif !src.runnable?
           @sources[src] = SourceCondition::UNRUNNABLE
@@ -43,6 +43,7 @@ module Kolekt
         instance = src.new
         id = src.identifier
         dry = instance.dry
+
         if dry.first and !reporter.wants id, dry[1..-1]
           @sources[src] = SourceCondition::DRYED_OUT
         else

@@ -1,19 +1,13 @@
-require 'kolekt/sources/augeas'
-require 'kolekt/sources/dpkg_packages'
-require 'kolekt/sources/facter'
-require 'kolekt/sources/linux_cmdline'
-require 'kolekt/sources/linux_cpuinfo'
-require 'kolekt/sources/linux_modules'
-require 'kolekt/sources/linux_mounts'
-require 'kolekt/sources/linux_version'
-require 'kolekt/sources/lsb_release'
-require 'kolekt/sources/lspci'
-require 'kolekt/sources/ohai'
-require 'kolekt/sources/pacman_packages'
+Dir[File.join File.dirname(__FILE__), 'sources', '*.rb'].each {|f| require f}
 
-module Kolekt; module Sources
-  def self.available
-    @@AVAILABLE ||= constants.collect { |c| const_get(c) }.
-      select { |c| c.instance_of? Class and c.identifier != 'base' }
+module Kolekt
+  module Sources
+    def self.available
+      @@AVAILABLE ||= constants.collect do |c|
+        const_get(c)
+      end.select do |c|
+        c.instance_of? Class and c.identifier != 'base'
+      end
+    end
   end
-end; end
+end
