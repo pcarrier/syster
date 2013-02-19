@@ -1,12 +1,14 @@
-module Kolekt; module Reporters; class Base
-  def report name, payload
-  end
+module Kolekt; module Reporters
+  class Base
+    def report name, payload
+    end
 
-  # Stupid by default
-  def wants identifier, dry_payload
-    true
-  end
+    # Stupid by default
+    def wants identifier, dry_payload
+      true
+    end
 
-  def finish
+    def finish
+    end
   end
-end; end; end
+end

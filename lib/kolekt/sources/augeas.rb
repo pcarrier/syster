@@ -1,6 +1,7 @@
 require 'kolekt/sources/base'
 
-module Kolekt; module Sources; class Augeas < Base
+module Kolekt::Sources
+  class Augeas < Base
   def self.active?
     begin
       require 'augeas'
@@ -75,4 +76,5 @@ module Kolekt; module Sources; class Augeas < Base
     
     return res
   end
-end; end; end
+  end
+end

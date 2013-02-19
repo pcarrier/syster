@@ -1,9 +1,31 @@
 require 'kolekt/reporters/base'
-require 'pp'
+require 'mongo'
+require 'socket'
 
-module Kolekt; module Reporters; class Console < Base
-  def report name, payload
-    puts "=== #{name} ==="
-    pp payload
+# Configured through MONGODB_URI
+
+module Kolekt::Reporters
+  class Console < Base
+    include Mongo
+  
+    def initialize
+      @client = MongoClient.new
+      @db = @client['kolekt']
+      @coll = @db['hosts']
+      @update = {}
+    end
+  
+    def report name, payload
+      @update[name] = payload
+    end
+  
+  
+    def wants identifier, dry_payload
+      true
+    end
+  
+    def finish
+      @coll.update 
+    end
   end
-end; end; end
+end
