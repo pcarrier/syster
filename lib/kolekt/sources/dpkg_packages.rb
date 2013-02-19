@@ -19,14 +19,15 @@ module Kolekt; module Sources; class DpkgPackages < Base
   end
 
   def collect
-    packages = Hash[
-      %x[dpkg-query -Wf '${Package}\t${Architecture}\t${Status}\t${Version}\n'].lines.collect do |line|
-      fields = line.strip.split "\t"
-      next [fields[0..1], fields[2..-1]]
-    end]
-    
+    packages = {}
+    %x[dpkg-query -Wf '${Package}\t${Architecture}\t${Status}\t${Version}\n'].lines.each do |line|
+      pkg, arch, status, version = line.strip.split "\t"
+      packages[pkg] ||= {}
+      packages[pkg][arch] = [status, version]
+    end
+
     return [false, "exited with status #{$?.exitstatus}"] if $?.exitstatus != 0
-    
+
     [true, packages]
   end
 end; end; end
