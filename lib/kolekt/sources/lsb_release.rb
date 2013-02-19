@@ -20,6 +20,7 @@ module Kolekt; module Sources; class LsbRelease < Base
     ]
 
     return [false, "exited with status #{$?.exitstatus}"] if $?.exitstatus != 0
+    
     [true, res]
   end
 end; end; end

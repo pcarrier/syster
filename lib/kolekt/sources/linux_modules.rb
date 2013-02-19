@@ -10,14 +10,8 @@ module Kolekt; module Sources; class LinuxModules < Base
   end
 
   def collect
-    begin
-      list = File.read('/proc/modules').lines.collect do |l|
-        l.split(' ', 2).first
-      end.sort
-      
-      return [true, list]
-    rescue Exception => e
-      return [false, "exception (#{e})"]
-    end
+    [true, File.read('/proc/modules').lines.collect do |l|
+      l.split(' ', 2).first
+    end.sort]
   end
 end; end; end

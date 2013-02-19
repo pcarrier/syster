@@ -11,12 +11,8 @@ module Kolekt; module Sources; class Ohai < Base
   end
 
   def collect
-    begin
-      s = Ohai::System.new
-      s.all_plugins
-      return [true, s]
-    rescue Exception => e
-      return [false, "exception (#{e})"]
-    end
+    sys = ::Ohai::System.new
+    sys.all_plugins
+    return [true, sys]
   end
 end; end; end

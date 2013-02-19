@@ -14,10 +14,6 @@ module Kolekt; module Sources; class LinuxCmdline < Base
   end
 
   def collect
-    begin
-      return [true, File.read('/proc/cmdline').strip]
-    rescue Exception => e
-      return [false, "exception (#{e})"]
-    end
+    [true, File.read('/proc/cmdline').strip]
   end
 end; end; end

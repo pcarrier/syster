@@ -10,25 +10,22 @@ module Kolekt; module Sources; class LinuxMounts < Base
   end
 
   def collect
-    begin
-      entries = File.read('/proc/mounts').lines.collect do |l|
-        spec, point, type, optstr, dump, passno = l.strip.split " "
-        options = Hash[optstr.split(',').collect { |e|
-          next e.split('=', 2) if e.include? '='
-          next e, true
-        }]
+    entries = File.read('/proc/mounts').lines.collect do |l|
+      spec, point, type, optstr, dump, passno = l.strip.split " "
 
-          next :spec => spec,
-               :point => point,
-               :type => type,
-               :options => options,
-               :dump => dump,
-               :passno => passno
-        end
+      options = Hash[optstr.split(',').collect { |e|
+        next e.split('=', 2) if e.include? '='
+        next e, true
+      }]
 
-      [true, entries]
-    rescue Exception => e
-      return [false, "exception (#{e})"]
+      next :spec => spec,
+           :point => point,
+           :type => type,
+           :options => options,
+           :dump => dump,
+           :passno => passno
     end
+
+    [true, entries]
   end
 end; end; end

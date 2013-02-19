@@ -17,14 +17,8 @@ module Kolekt; module Sources; class LinuxVersion < Base
   end
 
   def collect
-    begin
-      res = Hash[FILES.collect do |fname|
-        [fname, File.read(File.join(DIR, fname)).strip]
-      end]
-      
-      return [true, res]
-    rescue Exception => e
-      return [false, "exception (#{e})"]
-    end
+    [true, Hash[FILES.collect { |fname|
+      [fname, File.read(File.join(DIR, fname)).strip]
+    }]]
   end
 end; end; end

@@ -24,14 +24,11 @@ module Kolekt; module Sources; class Facter < Base
       $stderr.puts "Could not load Puppet: #{detail}"
     end
 
-    begin
-      require 'facter'
-      ::Facter.loadfacts
-      res = ::Facter.to_hash
-      res['used_puppet'] = used_puppet
-      return [true, res]
-    rescue Exception => e
-      return [false, "exception (#{e})"]
-    end
+    require 'facter'
+    ::Facter.loadfacts
+    res = ::Facter.to_hash
+    res['used_puppet'] = used_puppet
+
+    [true, res]
   end
 end; end; end

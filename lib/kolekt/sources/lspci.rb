@@ -11,7 +11,9 @@ module Kolekt; module Sources; class LsPci < Base
 
   def collect
     res = Hash[%x[lspci].lines.collect{|l| l.strip.split(' ', 2)}]
+    
     return [false, "exited with status #{$?.exitstatus}"] if $?.exitstatus != 0
+    
     [true, res]
   end
 end; end; end
