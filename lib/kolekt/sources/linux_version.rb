@@ -12,6 +12,10 @@ module Kolekt; module Sources; class LinuxVersion < Base
     File.exists? File.join(DIR, 'ostype')
   end
 
+  def dry
+    Kolekt::Helpers::BootId::dry
+  end
+
   def collect
     begin
       res = Hash[FILES.collect do |fname|

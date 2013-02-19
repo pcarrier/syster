@@ -2,7 +2,7 @@ require 'test/unit'
 require 'kolekt/sources/base'
 
 module Foo
-  class Bar < Base
+  class Bar < Kolekt::Sources::Base
   end
 end
 

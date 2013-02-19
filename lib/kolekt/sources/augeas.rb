@@ -30,6 +30,23 @@ module Kolekt; module Sources; class Augeas < Base
   end
 
   private
+  def mix h, v, cpath
+    v_relevant = !v.nil? and v != cpath
+    h_relevant = !h.empty?
+
+    case true
+    when (v_relevant and h_relevant) then
+      raise 'Damn, $IT happened!' if h[:key] != nil
+      h[:key] = v
+      return h
+    when h_relevant then
+      return h
+    when v_relevant then
+      return v
+    end
+  end
+
+  private
   def makeHash aug, path
     res = {}
     # Filter out comments
@@ -37,19 +54,12 @@ module Kolekt; module Sources; class Augeas < Base
       name = File.basename cpath
       v = aug.get cpath
       h = makeHash aug, cpath
-    
-      v_relevant = !v.nil? and v != cpath
-      h_relevant = !h.empty?
 
-      case true
-      when (v_relevant and h_relevant) then
-        res[name] = h
-        raise 'Damn, it happened' if res[name][:value] != nil
-        res[name][:value] = v
-      when h_relevant then
-        res[name] = h
-      when v_relevant then
-        res[name] = v
+      if name =~ /(.*)\[(\d+)\]/
+        res[$1] ||= []
+        res[$1][$2.to_i] = mix(h, v, cpath)
+      else
+        res[name] = mix h, v, cpath
       end
     end
     

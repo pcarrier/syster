@@ -18,15 +18,15 @@ module Kolekt; class Engine
     @log = options[:logger]
     @log ||= Logger.new(STDERR)
 
-    Kolekt::Sources.available.each do |source|
-      id = source.identifier
+    Kolekt::Sources.available.each do |src|
+      id = src.identifier
 
       if options[:exclude] and options[:exclude].find {|e| e === id}
-        @sources[source] = SourceCondition::EXCLUDED
-      elsif !source.runnable?
-        @sources[source] = SourceCondition::UNRUNNABLE
+        @sources[src] = SourceCondition::EXCLUDED
+      elsif !src.runnable?
+        @sources[src] = SourceCondition::UNRUNNABLE
       else
-        @sources[source] = SourceCondition::READY
+        @sources[src] = SourceCondition::READY
       end
     end
   end
@@ -36,29 +36,25 @@ module Kolekt; class Engine
       :started => Time.now.to_i
     }
     
-    to_run = @sources.find_all do |src, condition|
-      condition == SourceCondition::READY
-    end
-    
-    to_run.each do |source, condition|
-      instance = source.new
+    @sources.select { |_, c| c == SourceCondition::READY }.each do |src, _|
+      instance = src.new
       dry = instance.dry
-      if dry.first and reporter.wants dry[1..-1]
-        @sources[source] = SourceCondition.DRYED_OUT
+      if dry.first and !reporter.wants dry[1..-1]
+        @sources[src] = SourceCondition::DRYED_OUT
       else
         success, payload = instance.collect
         if success
-          @sources[source] = SourceCondition::SUCCEEDED
-          reporter.report source.identifier, payload
+          @sources[src] = SourceCondition::SUCCEEDED
+          reporter.report src.identifier, payload
         else
-          @sources[source] = SourceCondition::FAILED
-          @log.warn "#{source.identifier} failed: #{payload}"
+          @sources[src] = SourceCondition::FAILED
+          @log.warn "#{src.identifier} failed: #{payload}"
         end
       end
     end
 
     internal_report[:sources] = @sources
-    internal_report[:stopped] = Time.now.to_i
+    internal_report[:finished] = Time.now.to_i
     reporter.report 'kolekt', internal_report
 
     begin

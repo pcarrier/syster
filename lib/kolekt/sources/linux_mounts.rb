@@ -1,6 +1,6 @@
 require 'kolekt/sources/base'
 
-module Kolekt; module Sources; class LinuxMounts < Kolekt::Sources::Base
+module Kolekt; module Sources; class LinuxMounts < Base
   def self.identifier
     'linux_mounts'
   end

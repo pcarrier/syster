@@ -1,9 +1,8 @@
 require 'kolekt/reporters/base'
-require 'awesome_print'
+require 'json'
 
 module Kolekt; module Reporters; class Console < Base
   def report name, payload
-    puts "=== #{name} ==="
-    ap payload
+    puts JSON::dump [name, payload]
   end
 end; end; end
