@@ -15,8 +15,8 @@ module Kolekt; module Sources; class LsbRelease < Base
 
   def collect
     res = Hash[
-      %w[distributor description release codename].zip(
-        %x[lsb_release -as].lines.collect{|l|l.strip})
+      %x[lsb_release -a].lines.
+        collect{ |l| l.strip.split "\t"}
     ]
 
     return [false, "exited with status #{$?.exitstatus}"] if $?.exitstatus != 0
