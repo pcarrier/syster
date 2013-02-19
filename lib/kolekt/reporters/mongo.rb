@@ -1,10 +1,10 @@
 require 'kolekt/reporters/base'
 require 'socket'
 
-# Configured through ENV['MONGODB_URI']
 module Kolekt::Reporters
   class Mongo < Base
     def self.runnable?
+      return false # mongodb rejects '.' in keys. F*** off.
       begin
         require 'mongo'
       catch LoadException
