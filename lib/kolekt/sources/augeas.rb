@@ -57,7 +57,7 @@ module Kolekt; module Sources; class Augeas < Base
 
       if name =~ /(.*)\[(\d+)\]/
         res[$1] ||= []
-        res[$1][$2.to_i] = mix(h, v, cpath)
+        res[$1][$2.to_i - 1] = mix(h, v, cpath)
       else
         res[name] = mix h, v, cpath
       end
