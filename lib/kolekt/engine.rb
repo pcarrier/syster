@@ -53,7 +53,7 @@ module Kolekt; class Engine
       end
     end
 
-    internal_report[:sources] = @sources
+    internal_report[:sources] = Hash[@sources.collect {|src, c| [src.identifier, c]}]
     internal_report[:finished] = Time.now.to_i
     reporter.report 'kolekt', internal_report
 
