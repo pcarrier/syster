@@ -35,8 +35,10 @@ module Kolekt; class Engine
     internal_report = {
       :started => Time.now.to_i
     }
-    
-    @sources.select { |_, c| c == SourceCondition::READY }.each do |src, _|
+
+    @sources.each do |src, c|
+      next unless c == SourceCondition::READY
+
       instance = src.new
       id = src.identifier
       dry = instance.dry
