@@ -48,7 +48,7 @@ module Kolekt; module Sources; class Augeas < Base
 
   private
   def makeHash aug, path
-    children = aug.match(%[#{path}/*[label()!="#comment"]])
+    children = aug.match(%[#{path.gsub '!', '\!'}/*[label()!="#comment"]])
 
     if children.all? {|c| c =~ /^\d+$/} # array
       res = []
