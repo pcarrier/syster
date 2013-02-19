@@ -38,17 +38,24 @@ module Kolekt; class Engine
     
     @sources.select { |_, c| c == SourceCondition::READY }.each do |src, _|
       instance = src.new
+      id = src.identifier
       dry = instance.dry
-      if dry.first and !reporter.wants src.identifier, dry[1..-1]
+      if dry.first and !reporter.wants id, dry[1..-1]
         @sources[src] = SourceCondition::DRYED_OUT
       else
-        success, payload = instance.collect
+        begin
+          success, payload = instance.collect
+        rescue Exception => e
+          success = false
+          @log.warn "#{id} raised an exception: #{e}"
+        end
+
         if success
           @sources[src] = SourceCondition::SUCCEEDED
-          reporter.report src.identifier, payload
+          reporter.report id, payload
         else
           @sources[src] = SourceCondition::FAILED
-          @log.warn "#{src.identifier} failed: #{payload}"
+          @log.warn "#{id} failed: #{payload}"
         end
       end
     end
