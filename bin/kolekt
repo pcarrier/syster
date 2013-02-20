@@ -12,17 +12,26 @@ options = {
 optparse = OptionParser.new do |opts|
   opts.banner = "Usage: kolekt [--exclude exclude..]\n" \
     "  Report host information"
-  opts.on '-r', '--reporter', 'Use a reporter' do |r|
-    options[:reporter] = Kolekt::Reporters.available[r]
+  opts.on '-r', '--reporter REPORTER', 'Use a reporter (or "list")' do |r|
+    options[:reporter] = r
   end
-  opts.on '-e', '--exclude', 'Exclude a source by identifier' do |e|
+  opts.on '-e', '--exclude IDENTIFIER', 'Exclude a source' do |e|
     options[:excludes] << e
   end
-  opts.on '-E', '--exclude-regexp', 'Exclude sources by regexp' do |p|
+  opts.on '-E', '--exclude-regexp PATTERN', 'Exclude sources by regexp' do |p|
     options[:excludes] << Regexp.new(p)
   end
 end
 
-reporter = options[:reporter].new options
+optparse.parse!
+
+if options[:reporter] == 'list'
+  Kolekt::Reporters.available.each do |n, _|
+    puts n
+  end
+  exit 0
+end
+
+reporter = Kolekt::Reporters.available[options[:reporter]].new options
 engine = Kolekt::Engine.new options
 engine.run reporter

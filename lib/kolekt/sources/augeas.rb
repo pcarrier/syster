@@ -2,14 +2,13 @@ require 'kolekt/sources/base'
 
 module Kolekt::Sources
   class Augeas < Base
-  def self.active?
-    Kolekt::Helpers::Require.can_require? %w[augeas]
-  end
+    def self.active?
+      Kolekt::Helpers::Require.can_require? %w[augeas]
+    end
 
-  def collect
-    require 'augeas'
-    begin
-      res = nil
+    def collect
+      require 'augeas'
+
       ::Augeas::open '/', nil, ::Augeas::NO_LOAD do |aug|
         # Those lenses create too much noise or are somewhat broken for us
         %w[Services Protocols Xml].each do |lens|
@@ -17,44 +16,43 @@ module Kolekt::Sources
         end
 
         aug.load
-        res = makeHash aug, '/files'
+        return [true, makeHash(aug, '/files')]
       end
-      return [true, res]
-    rescue Exception => e
-      return [false, "exception (#{e})"]
     end
-  end
 
-  private
-  def mix h, v, cpath
-    v_relevant = !v.nil? and v != cpath
-    h_relevant = !h.empty?
+    private
+    def mix h, v, cpath
+      v_relevant = !v.nil? and v != cpath
+      h_relevant = !h.nil? and !h.empty?
 
-    case true
-    when (v_relevant and h_relevant) then
-      raise 'Damn, $IT happened!' if h[:key] != nil
-      h[:key] = v
-      return h
-    when h_relevant then
-      return h
-    when v_relevant then
-      return v
-    end
-  end
-
-  private
-  def makeHash aug, path
-    children = aug.match(%[#{path.gsub '!', '\!'}/*[label()!="#comment"]])
-
-    if children.all? {|c| c =~ /^\d+$/} # array
-      res = []
-      children.each do |cpath|
-        index = File.basename(cpath).to_i
-        res[index] = makeHash aug, cpath
+      case true
+      when (v_relevant and h_relevant) then
+        raise 'Damn, $IT happened!' if h[:key] != nil
+        h[:key] = v
+        return h
+      when h_relevant then
+        return h
+      when v_relevant then
+        return v
       end
-    else # not array
+    end
+
+    private
+    def makeHash aug, path
+      escaped = path.gsub '!', '\!'
+      children = aug.match "#{escaped}/*[label()!=\"#comment\"]"
+
+      return nil if children.empty?
+
+      if children.all? {|c| c =~ /\/\d+$/} # array
+        res = []
+        children.each do |cpath|
+          res[File.basename(cpath).to_i - 1] = makeHash aug, cpath
+        end
+        return res
+      end
+
       res = {}
-      # Filter out comments
       children.each do |cpath|
         name = File.basename cpath
         v = aug.get cpath
@@ -67,9 +65,8 @@ module Kolekt::Sources
           res[name] = mix h, v, cpath
         end
       end
+
+      return res
     end
-    
-    return res
-  end
   end
 end

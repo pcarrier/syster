@@ -52,7 +52,7 @@ module Kolekt
             success, payload = instance.collect
           rescue Exception => e
             success = false
-            @log.warn "#{id} raised an exception: #{e}"
+            @log.warn "#{id} raised an exception: #{e}, #{e.backtrace}"
           end
 
           if success
@@ -72,7 +72,7 @@ module Kolekt
       begin
         reporter.finish
       rescue Exception => e
-        @log.fatal "Reporter failed (#{e}"
+        @log.fatal "Reporter failed (#{e}, #{e.backtrace})"
       end
     end
   end

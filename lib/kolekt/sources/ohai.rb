@@ -10,7 +10,7 @@ module Kolekt::Sources
       require 'ohai'
       sys = ::Ohai::System.new
       sys.all_plugins
-      return [true, sys]
+      return [true, sys.data]
     end
   end
 end

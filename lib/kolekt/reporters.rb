@@ -8,7 +8,7 @@ module Kolekt
       end.select do |c|
         c.instance_of? Class and c.identifier != 'base' and c.runnable?
       end.collect do |c|
-        [c.identifer, c]
+        [c.identifier, c]
       end]
     end
   end
