@@ -15,7 +15,6 @@ Gem::Specification.new do |s|
   s.summary     = 'Collect information about your system'
   s.license     = 'ISC'
 
-  s.add_dependency 'mongodb', '~> 2.1.0'
   s.required_rubygems_version = '>= 1.2.0'
 
   s.files        = Dir.glob('{bin,lib}/**/*') + %w(COPYING)
