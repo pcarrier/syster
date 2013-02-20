@@ -16,9 +16,9 @@ module Kolekt::Sources
 
     def collect
       res = Hash[
-        %x[lsb_release -a].lines.
-        collect{ |l| l.strip.split "\t"}
-      ]
+        %x[lsb_release -a].lines.collect do |l|
+          l.strip.split "\t"
+        end]
 
       return [false, "exited with status #{$?.exitstatus}"] if $?.exitstatus != 0
       
