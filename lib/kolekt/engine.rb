@@ -1,5 +1,6 @@
 require 'kolekt/sources'
 require 'logger'
+require 'date'
 
 module Kolekt
   class Engine
@@ -34,7 +35,7 @@ module Kolekt
 
     def run reporter
       internal_report = {
-        :started => Time.now.to_i
+        :started => Time.now.utc.iso8601
       }
 
       @sources.each do |src, c|
@@ -65,7 +66,7 @@ module Kolekt
       end
 
       internal_report[:sources] = Hash[@sources.collect {|src, c| [src.identifier, c]}]
-      internal_report[:finished] = Time.now.to_i
+      internal_report[:finished] = Time.now.utc.iso8601
       reporter.report 'kolekt', internal_report
 
       begin
