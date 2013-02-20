@@ -3,12 +3,7 @@ require 'kolekt/sources/base'
 module Kolekt::Sources
   class Facter < Base
     def self.runnable?
-      begin
-        require 'facter'
-        return true
-      rescue LoadError
-        return false
-      end
+      Kolekt::Helpers::Require.can_require? %w[facter]
     end
 
     def collect
@@ -21,8 +16,8 @@ module Kolekt::Sources
           $LOAD_PATH << Puppet[:libdir]
         end
         used_puppet = true
-      rescue LoadError => detail
-        $stderr.puts "Could not load Puppet: #{detail}"
+      rescue LoadError
+        # ignored, we'll just remember
       end
 
       require 'facter'

@@ -4,12 +4,7 @@ require 'socket'
 module Kolekt::Reporters
   class Mongo < Base
     def self.runnable?
-      return false # mongodb rejects '.' in keys. F*** off.
-      begin
-        require 'mongo'
-      catch LoadException
-        return false
-      end
+      Kolekt::Helpers::Require.can_require? %w[mongo]
     end
   
     def initialize params={}

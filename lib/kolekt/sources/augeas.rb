@@ -3,12 +3,7 @@ require 'kolekt/sources/base'
 module Kolekt::Sources
   class Augeas < Base
   def self.active?
-    begin
-      require 'augeas'
-      return true
-    rescue LoadError
-      return false
-    end
+    Kolekt::Helpers::Require.can_require? %w[augeas]
   end
 
   def collect
