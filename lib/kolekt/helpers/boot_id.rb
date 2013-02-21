@@ -3,7 +3,7 @@ module Kolekt
     module BootId
       def self.boot_id
         if PLATFORM.end_with? 'linux'
-          @@BOOTID ||= File.read '/proc/sys/kernel/random/boot_id'
+          @@BOOTID ||= File.read('/proc/sys/kernel/random/boot_id').strip
         else
           return nil
         end
