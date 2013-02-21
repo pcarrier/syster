@@ -21,49 +21,39 @@ module Kolekt::Sources
     end
 
     private
-    def mix h, v, cpath
-      v_relevant = !v.nil? and v != cpath
-      h_relevant = !h.nil? and !h.empty?
-
-      case true
-      when (v_relevant and h_relevant) then
-        raise 'Damn, $IT happened!' if h[:key] != nil
-        h[:key] = v
-        return h
-      when h_relevant then
-        return h
-      when v_relevant then
-        return v
-      end
-    end
-
-    private
     def makeHash aug, path
       escaped = path.gsub '!', '\!'
       children = aug.match "#{escaped}/*[label()!=\"#comment\"]"
+      value = aug.get escaped
 
-      return nil if children.empty?
+      return value if children.empty?
 
-      if children.all? {|c| c =~ /\/\d+$/} # array
+      if children.all? {|c| c =~ /\/\d+$/} and value.nil? # array
         res = []
         children.each do |cpath|
-          res[File.basename(cpath).to_i - 1] = makeHash aug, cpath
+          id = File.basename(cpath).to_i - 1
+          raise '0 index!' if id == -1
+          res[id] = makeHash aug, cpath
         end
         return res
       end
 
       res = {}
+
       children.each do |cpath|
         name = File.basename cpath
-        v = aug.get cpath
-        h = makeHash aug, cpath
 
         if name =~ /(.*)\[(\d+)\]/
           res[$1] ||= []
-          res[$1][$2.to_i - 1] = mix(h, v, cpath)
+          res[$1][$2.to_i - 1] = makeHash aug, cpath
         else
-          res[name] = mix h, v, cpath
+          res[name] = makeHash aug, cpath
         end
+      end
+
+      if !value.nil? and value != path
+        raise 'Damn it, a conflict' if res.has_key? 'key'
+        res['key'] = value
       end
 
       return res
