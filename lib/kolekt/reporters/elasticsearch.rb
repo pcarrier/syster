@@ -21,7 +21,7 @@ module Kolekt::Reporters
       uri ||= 'http://localhost:9200/kolekt/'
       @uri = URI uri
 
-      @http = Net::HTTP::Persistent.new 'kolekt'
+      @http = ::Net::HTTP::Persistent.new 'kolekt'
 
       begin
         @dry = get_dry
@@ -87,7 +87,7 @@ module Kolekt::Reporters
 
     private
     def post uri, payload
-      p = Net::HTTP::Post.new uri.path
+      p = ::Net::HTTP::Post.new uri.path
       p.body = payload
       res = @http.request uri, p
       unless res.code[0] == '2'
