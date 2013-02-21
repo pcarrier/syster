@@ -1,6 +1,6 @@
 require 'kolekt/sources'
 require 'logger'
-require 'date'
+require 'time'
 
 module Kolekt
   class Engine
