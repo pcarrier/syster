@@ -1,4 +1,5 @@
 require 'kolekt/sources/base'
+require 'kolekt/helpers/path'
 
 module Kolekt::Sources
   class DpkgPackages < Base

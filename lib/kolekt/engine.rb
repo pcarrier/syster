@@ -17,8 +17,8 @@ module Kolekt
 
     def initialize options={}
       @sources = {}
+      options[:logger] ||= Logger.new(STDERR)
       @log = options[:logger]
-      @log ||= Logger.new(STDERR)
 
       Kolekt::Sources.available.each do |src|
         id = src.identifier

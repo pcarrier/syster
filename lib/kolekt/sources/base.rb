@@ -1,5 +1,3 @@
-require 'kolekt/helpers'
-
 module Kolekt
   module Sources
     class Base

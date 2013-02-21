@@ -1,4 +1,5 @@
 require 'kolekt/reporters/base'
+require 'kolekt/helpers/require'
 require 'socket'
 
 module Kolekt::Reporters

@@ -1,4 +1,5 @@
 require 'kolekt/sources/base'
+require 'kolekt/helpers/boot_id'
 
 module Kolekt::Sources
   class LinuxCmdline < Base

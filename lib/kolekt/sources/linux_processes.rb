@@ -4,7 +4,7 @@ require 'shellwords'
 module Kolekt::Sources
   class LinuxProcesses < Base
     def self.identifier
-      'processes'
+      'linux_processes'
     end
 
     def self.runnable?
