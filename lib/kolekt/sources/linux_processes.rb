@@ -1,5 +1,4 @@
 require 'kolekt/sources/base'
-require 'shellwords'
 
 module Kolekt::Sources
   class LinuxProcesses < Base
@@ -20,7 +19,9 @@ module Kolekt::Sources
         next unless e =~ /^[0-9]+$/
 
         begin
-          cmd = File.read("/proc/#{e}/cmdline").split("\0").shelljoin
+          cmd = File.read("/proc/#{e}/cmdline").split("\0").collect do |e|
+            e.gsub ' ', '\ '
+          end.join ' '
           stats[cmd] += 1
         rescue Errno::ENOENT
           # ignore processes disappearing under our feet
