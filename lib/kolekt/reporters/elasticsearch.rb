@@ -91,7 +91,7 @@ module Kolekt::Reporters
       p.body = payload
       res = @http.request uri, p
       unless res.code[0] == '2'
-          raise "#{uri} POST failed with #{res.code}"
+          raise "#{uri} POST failed with #{res.code} (#{res.body})"
       end
       return res
     end
