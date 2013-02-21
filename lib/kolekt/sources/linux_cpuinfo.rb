@@ -3,7 +3,7 @@ require 'kolekt/sources/base'
 module Kolekt::Sources
   class LinuxCpuInfo < Base
     def self.identifier
-      'linux_cpuinfo'
+      'cpuinfo'
     end
 
     def self.runnable?

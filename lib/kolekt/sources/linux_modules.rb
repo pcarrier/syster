@@ -3,7 +3,7 @@ require 'kolekt/sources/base'
 module Kolekt::Sources
   class LinuxModules < Base
     def self.identifier
-      'linux_modules'
+      'modules'
     end
 
     def self.runnable?

@@ -3,7 +3,7 @@ require 'kolekt/sources/base'
 module Kolekt::Sources
   class LinuxMounts < Base
     def self.identifier
-      'linux_mounts'
+      'mounts'
     end
 
     def self.runnable?
