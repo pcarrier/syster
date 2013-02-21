@@ -15,6 +15,9 @@ optparse = OptionParser.new do |opts|
   opts.on '-r', '--reporter REPORTER', 'Use a reporter (or "list")' do |r|
     options[:reporter] = r
   end
+  opts.on '-u', '--uri URI', 'Specify a URI for your reporter' do |u|
+    options[:uri] = u
+  end
   opts.on '-e', '--exclude IDENTIFIER', 'Exclude a source' do |e|
     options[:excludes] << e
   end
