@@ -5,7 +5,7 @@ require 'kolekt/engine'
 require 'optparse'
 
 options = {
-  :reporter => Kolekt::Reporters::Console,
+  :reporter => 'console',
   :excludes => []
 }
 

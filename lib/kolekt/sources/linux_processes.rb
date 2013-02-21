@@ -21,7 +21,7 @@ module Kolekt::Sources
 
         begin
           cmd = File.read("/proc/#{e}/cmdline").split("\0").shelljoin
-          stats[cmd]++
+          stats[cmd] += 1
         rescue Errno::ENOENT
           # ignore processes disappearing under our feet
         end

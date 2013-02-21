@@ -4,6 +4,10 @@ require 'socket'
 module Kolekt::Reporters
   class Mongo < Base
     def self.runnable?
+      # Sadly mongodb doesn't allow '$' or '.' in key names.
+      # If somebody can be bothered to implement a decent workaround,
+      # I'll take patches.
+      return false
       Kolekt::Helpers::Require.can_require? %w[mongo]
     end
   
@@ -26,6 +30,7 @@ module Kolekt::Reporters
     end
   
     def finish
+      # TODO: This allows stale data inside the sources.
       @coll.update({:hostname => Socket.gethostname}, @update, :upsert => true)
     end
   end
