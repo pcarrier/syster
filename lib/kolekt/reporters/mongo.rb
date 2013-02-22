@@ -12,7 +12,11 @@ module Kolekt::Reporters
       require 'mongo'
 
       @hostname = Socket.gethostname
-      @db = ::Mongo::MongoClient.new['kolekt']
+
+      uri = params[:uri] or ENV['MONGODB_URI']
+      client = ::Mongo::MongoClient.from_uri uri
+
+      @db = client['kolekt']
 
       drys = @db['dry'].find(:hostname => @hostname)
 
