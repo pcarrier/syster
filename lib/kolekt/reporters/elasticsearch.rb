@@ -32,13 +32,26 @@ module Kolekt::Reporters
       end
     end
   
-    def report name, payload
-      @update[name] = ::JSON::dump payload
+    def report identifier, payload
+      @update[identifier] = ::JSON::dump payload
+
+      if @dry.has_key? identifier
+        @dry[identifier][:last_run] = Time.now.to_i
+      end
     end
 
     def wants identifier, dry_payload
-      orig = @dry[identifier]
-      @dry[identifier] = dry_payload
+      unless @dry.has_key? identifier
+        @dry[identifier] = {'payload'    => nil,
+                            'last_dried' => 0,
+                            'last_run'   => 0}
+      end
+
+      orig = @dry[identifier]['payload']
+
+      @dry[identifier]['payload'] = dry_payload
+      @dry[identifier]['last_dried'] = Time.now.to_i
+
       return orig == dry_payload
     end
   
