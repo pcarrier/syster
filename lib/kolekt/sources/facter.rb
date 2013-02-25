@@ -1,4 +1,5 @@
 require 'kolekt/sources/base'
+require 'kolekt/helpers/puppet'
 
 module Kolekt::Sources
   class Facter < Base
@@ -10,8 +11,7 @@ module Kolekt::Sources
       used_puppet = false
 
       begin
-        require 'puppet'
-        Puppet.parse_config
+        Kolekt::Helpers::Puppet.initialized
         unless $LOAD_PATH.include?(Puppet[:libdir])
           $LOAD_PATH << Puppet[:libdir]
         end
