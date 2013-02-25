@@ -54,7 +54,7 @@ module Syster
             success, payload = instance.collect
           rescue Exception => e
             success = false
-            payload = "raised an exception: #{e}, #{e.backtrace}"
+            payload = "raised an exception: #{e}, #{e.backtrace.join ', '}"
           end
 
           if success

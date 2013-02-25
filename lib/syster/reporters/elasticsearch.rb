@@ -21,7 +21,7 @@ module Syster::Reporters
         @dry = get_dry
       rescue Exception => e
         @dry = {}
-        @log.warn "Couldn't get DRY (#{e}, #{e.backtrace}), creating documents"
+        @log.info "Couldn't get DRY (#{e}), creating documents"
         create_documents
       end
     end
