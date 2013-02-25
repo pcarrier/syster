@@ -16,9 +16,11 @@ module Kolekt
     attr_reader :sources
 
     def initialize options={}
+      @options = options
+
+      @log = options[:logger] || Logger.new(STDERR)
+
       @sources = {}
-      options[:logger] ||= Logger.new(STDERR)
-      @log = options[:logger]
 
       Kolekt::Sources.available.each do |src|
         id = src.identifier
@@ -41,7 +43,7 @@ module Kolekt
       @sources.each do |src, c|
         next unless c == SourceCondition::READY
 
-        instance = src.new
+        instance = src.new @options
         id = src.identifier
         dry = instance.dry
 

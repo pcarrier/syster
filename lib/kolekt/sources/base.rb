@@ -1,6 +1,9 @@
 module Kolekt
   module Sources
     class Base
+      def initialize options={}
+      end
+
       def self.identifier
         self.name.sub(/^.*::/, '').downcase
       end
