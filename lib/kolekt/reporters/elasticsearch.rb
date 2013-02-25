@@ -5,29 +5,24 @@ require 'socket'
 module Kolekt::Reporters
   class ElasticSearch < Base
     def self.runnable?
-      Kolekt::Helpers::Require.can_require? %w[net/http/persistent json]
+      Kolekt::Helpers::Require.can_require? %w[faraday json]
     end
   
     def initialize params={}
-      require 'net/http/persistent'
+      require 'faraday'
       require 'json'
 
       @log = params[:logger] || Logger.new(STDERR)
-
       @update = {}
-
-      uri = params[:uri]
-      uri ||= 'http://localhost:9200/kolekt/'
-      @uri = URI uri
-
-      @http = ::Net::HTTP::Persistent.new 'kolekt'
+      @conn = Faraday.new :url => (params[:uri] || 'http://localhost:9200/')
+      @hostname = Socket.gethostname
 
       begin
         @dry = get_dry
       rescue Exception => e
         @dry = {}
-        @log.warn "Couldn't get DRY (#{e}, #{e.backtrace}), creating entries"
-        create_indexes
+        @log.warn "Couldn't get DRY (#{e}, #{e.backtrace}), creating documents"
+        create_documents
       end
     end
   
@@ -57,7 +52,6 @@ module Kolekt::Reporters
     def finish
       post_host_update
       post_dry_update
-      @http.shutdown
     end
 
     private
@@ -65,47 +59,43 @@ module Kolekt::Reporters
       script = @update.collect{|k,_| "ctx._source.#{k} = #{k}"}.join ';'
       params = @update.collect{|k,v| %["#{k}": #{v}]}.join ','
 
-      post(host_uri + '_update', %[{"script": "#{script}", "params": {#{params}}}])
+      post "/kolekt/host/#{@hostname}/_update", %[{"script": "#{script}", "params": {#{params}}}]
     end
 
     private
     def post_dry_update
-      post dry_uri, ::JSON::dump(@dry)
+      post "/kolekt/dry/#{@hostname}", ::JSON::dump(@dry)
     end
 
     private
     def get_dry
-      rep = @http.request dry_uri
-      payload = ::JSON::load rep.body
+      payload = ::JSON::load get "/kolekt/dry/#{@hostname}"
       raise 'not found' unless payload['exists']
       return payload['_source']
     end
 
     private
-    def create_indexes
-      post(dry_uri + '?op_type=create', '{}')
-      post(host_uri + '?op_type=create', '{}')
+    def create_documents
+      post "/kolekt/dry/#{@hostname}?op_type=create", '{}'
+      post "/kolekt/host/#{@hostname}?op_type=create", '{}'
     end
 
     private
-    def dry_uri
-      @dry_uri ||= @uri + "dry/#{Socket.gethostname}/"
-    end
-
-    private
-    def host_uri
-      @host_uri ||= @uri + "host/#{Socket.gethostname}/"
-    end
-
-    private
-    def post uri, payload
-      p = ::Net::HTTP::Post.new uri.path
-      p.body = payload
-      res = @http.request uri, p
-      unless res.code[0] == '2'
-          raise "#{uri} POST failed with #{res.code} (#{res.body})"
+    def post path, payload
+      resp = @conn.post path, payload
+      unless resp.status / 100 == 2 # 2XX
+          raise "POST #{path} failed with #{resp.status} (#{resp.body})"
       end
-      return res
+      return resp.body
+    end
+
+    private
+    def get path
+      resp = @conn.get path
+      unless resp.status / 100 == 2 # 2XX
+          raise "POST #{path} failed with #{resp.status} (#{resp.body})"
+      end
+      return resp.body
     end
   end
 end
