@@ -1,8 +1,8 @@
 require 'test/unit'
-require 'kolekt/sources/base'
+require 'syster/sources/base'
 
 module Foo
-  class Bar < Kolekt::Sources::Base
+  class Bar < Syster::Sources::Base
   end
 end
 

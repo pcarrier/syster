@@ -1,4 +1,4 @@
-Source: kolekt
+Source: syster
 Section: ruby
 Priority: optional
 Maintainer: Pierre Carrier <pierre@spotify.com>
@@ -6,9 +6,9 @@ Build-Depends: debhelper (>= 7.0.50~), gem2deb (>= 0.2.7~)
 Standards-Version: 3.9.2
 XS-Ruby-Versions: all
 
-Package: kolekt
+Package: syster
 Architecture: all
 Depends: ${misc:Depends}, ruby | ruby-interpreter
 Description: Collect information about your system
- kolekt grabs information from your server and reports it to a central
+ syster grabs information from your server and reports it to a central
  datastore.

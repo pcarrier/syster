@@ -3,15 +3,15 @@
 lib = File.expand_path('../lib/', __FILE__)
 $:.unshift lib unless $:.include?(lib)
 
-require 'kolekt'
+require 'syster'
 
 Gem::Specification.new do |s|
-  s.name        = 'kolekt'
-  s.version     = Kolekt::VERSION
+  s.name        = 'syster'
+  s.version     = Syster::VERSION
   s.platform    = Gem::Platform::RUBY
   s.authors     = ['Pierre Carrier']
   s.email       = ['pierre@gcarrier.fr']
-  s.homepage    = 'https://github.com/pcarrier/kolekt'
+  s.homepage    = 'https://github.com/pcarrier/syster'
   s.summary     = 'Collect information about your system'
   s.license     = 'ISC'
 

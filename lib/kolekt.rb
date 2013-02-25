@@ -1,1 +1,1 @@
-require 'kolekt/version'
+require 'syster/version'

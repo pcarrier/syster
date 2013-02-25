@@ -1,0 +1,3 @@
+module Syster
+  VERSION = '0.1.2'
+end
