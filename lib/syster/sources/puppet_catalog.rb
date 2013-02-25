@@ -47,9 +47,9 @@ module Syster::Sources
     def catalog_path
       case catalog_type
       when :yaml
-        @catalog_path ||= File.join @puppet[:clientyamldir], "#{@puppet[:certname]}.yaml"
+        @catalog_path ||= File.join @puppet[:clientyamldir], 'catalog', "#{@puppet[:certname]}.yaml"
       when :json, nil
-        @catalog_path ||= File.join @puppet[:client_datadir], "#{@puppet[:certname]}.json"
+        @catalog_path ||= File.join @puppet[:client_datadir], 'catalog', "#{@puppet[:certname]}.json"
       end
     end
   end
