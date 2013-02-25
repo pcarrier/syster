@@ -54,7 +54,7 @@ module Kolekt
             success, payload = instance.collect
           rescue Exception => e
             success = false
-            @log.warn "#{id} raised an exception: #{e}, #{e.backtrace}"
+            payload = "raised an exception: #{e}, #{e.backtrace}"
           end
 
           if success
@@ -62,7 +62,7 @@ module Kolekt
             reporter.report id, payload
           else
             @sources[src] = SourceCondition::FAILED
-            @log.warn "#{id} failed: #{payload}"
+            @log.warn "Source #{id} failed: #{payload}"
           end
         end
       end
@@ -74,7 +74,7 @@ module Kolekt
       begin
         reporter.finish
       rescue Exception => e
-        @log.fatal "Reporter failed (#{e}, #{e.backtrace})"
+        @log.fatal "Reporter #{reporter.class.identifier} failed (#{e}, #{e.backtrace})"
       end
     end
   end
