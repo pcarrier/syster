@@ -19,7 +19,7 @@ module Kolekt
 
     private
     def self.local_directory
-      ENV['REPORTERS_DIR'] or '/var/lib/kolekt/reporters'
+      ENV['REPORTERS_DIR'] || '/var/lib/kolekt/reporters'
     end
 
     private

@@ -13,7 +13,7 @@ module Kolekt::Reporters
 
       @hostname = Socket.gethostname
 
-      uri = params[:uri] or ENV['MONGODB_URI']
+      uri = params[:uri] || ENV['MONGODB_URI']
       client = ::Mongo::MongoClient.from_uri uri
 
       @db = client['kolekt']

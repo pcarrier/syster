@@ -13,7 +13,7 @@ module Kolekt::Sources
 
     def dry
       begin
-        s = File.stat('/var/lib/dpkg/status')
+        s = File.stat '/var/lib/dpkg/status'
         return [true, [s.mtime.to_i, s.size]]
       rescue
         return [false, 'can\'t stat /var/lib/dpkg/status']

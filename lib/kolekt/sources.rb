@@ -17,7 +17,7 @@ module Kolekt
 
     private
     def self.local_directory
-      ENV['SOURCES_DIR'] or '/var/lib/kolekt/sources'
+      ENV['SOURCES_DIR'] || '/var/lib/kolekt/sources'
     end
 
     private

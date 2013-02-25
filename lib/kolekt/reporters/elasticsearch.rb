@@ -12,8 +12,7 @@ module Kolekt::Reporters
       require 'net/http/persistent'
       require 'json'
 
-      @log = params[:logger]
-      @log ||= Logger.new(STDERR)
+      @log = params[:logger] || Logger.new(STDERR)
 
       @update = {}
 
