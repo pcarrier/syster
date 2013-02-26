@@ -54,7 +54,9 @@ module Syster::Reporters
     def mongify o
       if o.respond_to? :keys
         return Hash[o.collect do |k,v|
-          [k.to_s.gsub('.','_').gsub('$','%'), mongify(v)]
+          k = k.to_s.gsub '.', '_'
+          k = '%'+k[1..-1] if k.start_with? '$'
+          next [k, mongify(v)]
         end]
       else
         return o
