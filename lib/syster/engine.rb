@@ -45,26 +45,33 @@ module Syster
 
         instance = src.new @options
         id = src.identifier
+        @log.debug "Source #{id} DRYing..."
         dry = instance.dry
 
-        if dry.first and !reporter.wants id, dry[1..-1]
-          @log.debug "Source #{id} DRYed out"
-          @sources[src] = SourceCondition::DRYED_OUT
+        if !dry.first
+          @log.debug "Source #{id} couldn't DRY (#{dry.inspect})."
         else
-          begin
-            success, payload = instance.collect
-          rescue Exception => e
-            success = false
-            payload = "raised an exception: #{e}, #{e.backtrace.join ', '}"
-          end
-
-          if success
-            @sources[src] = SourceCondition::SUCCEEDED
-            @log.debug "Source #{id} succeeded, reporting"
-            reporter.report id, payload
+          if !reporter.wants id, dry[1..-1]
+            @log.debug "Source #{id} DRYed, not wanted (#{dry.inspect})."
+            @sources[src] = SourceCondition::DRYED_OUT
           else
-            @sources[src] = SourceCondition::FAILED
-            @log.warn "Source #{id} failed: #{payload}"
+            @log.debug "Source #{id} DRYed, wanted (#{dry.inspect})."
+
+            begin
+              success, payload = instance.collect
+            rescue Exception => e
+              success = false
+              payload = "raised an exception: #{e}, #{e.backtrace.join ', '}"
+            end
+  
+            if success
+              @sources[src] = SourceCondition::SUCCEEDED
+              @log.debug "Source #{id} succeeded."
+              reporter.report id, payload
+            else
+              @sources[src] = SourceCondition::FAILED
+              @log.warn "Source #{id} failed (#{payload.inspect})."
+            end
           end
         end
       end
@@ -76,7 +83,7 @@ module Syster
       begin
         reporter.finish
       rescue Exception => e
-        @log.fatal "Reporter #{reporter.class.identifier} failed (#{e}, #{e.backtrace.join ', '})"
+        @log.fatal "Reporter #{reporter.class.identifier} failed (#{e}, #{e.backtrace.join ', '})."
       end
     end
   end
