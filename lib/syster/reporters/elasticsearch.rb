@@ -26,7 +26,7 @@ module Syster::Reporters
         create_documents
       end
     end
-  
+
     def report identifier, payload
       # Missing in Ruby 1.8: #encode ::Encoding::UTF_8, :undef => :replace
       @update[identifier] = ::Iconv.conv 'UTF-8//IGNORE', 'UTF-8',

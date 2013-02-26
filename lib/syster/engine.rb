@@ -48,6 +48,7 @@ module Syster
         dry = instance.dry
 
         if dry.first and !reporter.wants id, dry[1..-1]
+          @log.debug "Source #{id} DRYed out"
           @sources[src] = SourceCondition::DRYED_OUT
         else
           begin
@@ -59,6 +60,7 @@ module Syster
 
           if success
             @sources[src] = SourceCondition::SUCCEEDED
+            @log.debug "Source #{id} succeeded, reporting"
             reporter.report id, payload
           else
             @sources[src] = SourceCondition::FAILED
