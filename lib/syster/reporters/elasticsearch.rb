@@ -46,7 +46,7 @@ module Syster::Reporters
       @dry[identifier]['payload'] = dry_payload
       @dry[identifier]['last_dried'] = Time.now.to_i
 
-      return orig == dry_payload
+      return orig != dry_payload
     end
   
     def finish

@@ -39,7 +39,7 @@ module Syster::Reporters
       orig = @dry[identifier]
       @dry[identifier] = dry_payload
 
-      return orig == dry_payload
+      return orig != dry_payload
     end
 
     def finish
