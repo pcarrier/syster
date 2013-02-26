@@ -76,7 +76,7 @@ module Syster
       begin
         reporter.finish
       rescue Exception => e
-        @log.fatal "Reporter #{reporter.class.identifier} failed (#{e}, #{e.backtrace})"
+        @log.fatal "Reporter #{reporter.class.identifier} failed (#{e}, #{e.backtrace.join ', '})"
       end
     end
   end
