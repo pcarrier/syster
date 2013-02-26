@@ -76,8 +76,8 @@ module Syster::Reporters
 
     private
     def create_documents
-      post "/syster/dry/#{@hostname}?op_type=create", '{}'
-      post "/syster/host/#{@hostname}?op_type=create", '{}'
+      post "/syster/dry/#{@hostname}", '{}'
+      post "/syster/host/#{@hostname}", '{}'
     end
 
     private
