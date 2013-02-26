@@ -82,7 +82,9 @@ module Syster::Reporters
 
     private
     def post path, payload
-      resp = @conn.post path, payload
+      resp = @conn.post path do |req|
+        req.body = payload
+      end
       unless resp.status / 100 == 2 # 2XX
           raise "POST #{path} failed with #{resp.status} (#{resp.body})"
       end
