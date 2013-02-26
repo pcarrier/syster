@@ -16,7 +16,7 @@ module Syster::Sources
     end
 
     def collect
-      [true, File.read('/proc/cmdline').strip]
+      [true, {:cmdline => File.read('/proc/cmdline').strip}]
     end
   end
 end
