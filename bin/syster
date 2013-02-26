@@ -1,12 +1,14 @@
 #!/usr/bin/env ruby
 
+require 'logger'
+require 'optparse'
 require 'syster/reporters'
 require 'syster/engine'
-require 'optparse'
 
 options = {
   :reporter => 'console',
-  :excludes => []
+  :excludes => [],
+  :logger   => Logger.new(STDERR)
 }
 
 optparse = OptionParser.new do |opts|
@@ -23,6 +25,9 @@ optparse = OptionParser.new do |opts|
   end
   opts.on '-E', '--exclude-regexp PATTERN', 'Exclude sources by regexp' do |p|
     options[:excludes] << Regexp.new(p)
+  end
+  opts.on '-q', '--quiet', 'Hide info and debug log levels' do |p|
+    options[:logger].level = Logger::WARN
   end
 end
 
