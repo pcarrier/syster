@@ -18,17 +18,17 @@ module Syster::Reporters
 
       @db = client['syster']
 
-      drys = @db['dry'].find(:hostname => @hostname)
+      drys = @db['dry'].find(:_id => @hostname)
 
       raise 'Multiple DRYs!' if drys.count > 1
 
       if drys.count == 0
-        @dry = {:hostname => @hostname}
+        @dry = {:_id => @hostname}
       else
         @dry = drys.first
       end
 
-      @update = {:hostname => @hostname}
+      @update = {:_id => @hostname}
     end
 
     def report name, payload
@@ -43,7 +43,7 @@ module Syster::Reporters
     end
 
     def finish
-      @db['host'].update({:hostname => @hostname}, {'$set' => @update}, :upsert => true)
+      @db['host'].update({:_id => @hostname}, {'$set' => @update}, :upsert => true)
       @db['dry'].save @dry
     end
 
