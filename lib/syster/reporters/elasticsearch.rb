@@ -1,6 +1,7 @@
 require 'syster/reporters/base'
 require 'syster/helpers/require'
 require 'socket'
+require 'iconv'
 
 module Syster::Reporters
   class ElasticSearch < Base
@@ -27,7 +28,9 @@ module Syster::Reporters
     end
   
     def report identifier, payload
-      @update[identifier] = ::JSON::dump payload
+      # Missing in Ruby 1.8: #encode ::Encoding::UTF_8, :undef => :replace
+      @update[identifier] = ::Iconv.conv 'UTF-8//IGNORE', 'UTF-8',
+                                         ::JSON::dump(payload)
 
       if @dry.has_key? identifier
         @dry[identifier][:last_run] = Time.now.to_i
