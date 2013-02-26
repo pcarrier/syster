@@ -48,30 +48,30 @@ module Syster
         @log.debug "Source #{id} DRYing..."
         dry = instance.dry
 
-        if !dry.first
-          @log.debug "Source #{id} couldn't DRY (#{dry.inspect})."
+        if dry.first && !reporter.wants(id, dry[1..-1])
+          @log.debug "Source #{id} DRYed, not wanted (#{dry.inspect})."
+          @sources[src] = SourceCondition::DRYED_OUT
         else
-          if !reporter.wants id, dry[1..-1]
-            @log.debug "Source #{id} DRYed, not wanted (#{dry.inspect})."
-            @sources[src] = SourceCondition::DRYED_OUT
-          else
+          if dry.first
             @log.debug "Source #{id} DRYed, wanted (#{dry.inspect})."
+          else
+            @log.debug "Source #{id} couldn't DRY (#{dry.inspect})."
+          end
 
-            begin
-              success, payload = instance.collect
-            rescue Exception => e
-              success = false
-              payload = "raised an exception: #{e}, #{e.backtrace.join ', '}"
-            end
-  
-            if success
-              @sources[src] = SourceCondition::SUCCEEDED
-              @log.debug "Source #{id} succeeded."
-              reporter.report id, payload
-            else
-              @sources[src] = SourceCondition::FAILED
-              @log.warn "Source #{id} failed (#{payload.inspect})."
-            end
+          begin
+            success, payload = instance.collect
+          rescue Exception => e
+            success = false
+            payload = "raised an exception: #{e}, #{e.backtrace.join ', '}"
+          end
+
+          if success
+            @sources[src] = SourceCondition::SUCCEEDED
+            @log.debug "Source #{id} succeeded."
+            reporter.report id, payload
+          else
+            @sources[src] = SourceCondition::FAILED
+            @log.warn "Source #{id} failed (#{payload.inspect})."
           end
         end
       end
