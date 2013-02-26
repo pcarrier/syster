@@ -1,7 +1,8 @@
+require 'logger'
+require 'iconv'
+require 'socket'
 require 'syster/reporters/base'
 require 'syster/helpers/require'
-require 'socket'
-require 'iconv'
 
 module Syster::Reporters
   class ElasticSearch < Base

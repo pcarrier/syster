@@ -1,5 +1,5 @@
-require 'syster/sources'
 require 'logger'
+require 'syster/sources'
 require 'time'
 
 module Syster
