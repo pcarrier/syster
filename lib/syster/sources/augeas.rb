@@ -16,47 +16,45 @@ module Syster::Sources
         end
 
         aug.load
-        return [true, makeHash(aug, '/files')]
+        return [true, jsonify(aug, '/files')]
       end
     end
 
     private
-    def makeHash aug, path
+    def jsonify aug, path
       escaped = path.gsub '!', '\!'
-      children = aug.match "#{escaped}/*[label()!=\"#comment\"]"
-      value = aug.get escaped
-
-      return value if children.empty?
-
-      if children.all? {|c| c =~ /\/\d+$/} and value.nil? # array
-        res = []
-        children.each do |cpath|
-          id = File.basename(cpath).to_i - 1
-          raise '0 index!' if id == -1
-          res[id] = makeHash aug, cpath
-        end
-        return res
-      end
 
       res = {}
 
-      children.each do |cpath|
-        name = File.basename cpath
+      value = aug.get escaped
+      res['/value'] = value unless value.nil?
 
-        if name =~ /(.*)\[(\d+)\]/
-          res[$1] ||= []
-          res[$1][$2.to_i - 1] = makeHash aug, cpath
-        else
-          res[name] = makeHash aug, cpath
+      children = aug.match "#{escaped}/*[label()!=\"#comment\"]"
+      children.each_with_index do |cpath, index|
+        type, index = parse_path cpath
+        obj = jsonify aug, cpath
+        obj['/index'] = index
+        unless obj.size == 0
+          res[type] ||= []
+          res[type][index] = obj
         end
       end
 
-      if !value.nil? and value != path
-        raise 'Damn it, a conflict' if res.has_key? 'key'
-        res['key'] = value
-      end
-
       return res
+    end
+
+    private
+    def parse_path name
+      base = File.basename name
+      case base
+
+      when /^\d+$/
+        return 'entry', (base.to_i - 1)
+      when /(.*)\[(\d+)\]/
+        return $1, ($2.to_i - 1)
+      else
+        return base, 0
+      end
     end
   end
 end
