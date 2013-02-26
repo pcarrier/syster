@@ -21,7 +21,7 @@ module Syster::Sources
     end
 
     def collect
-      packages = Hash.new({})
+      packages = Hash.new {{}}
       %x[dpkg-query -Wf '${Package}\t${Architecture}\t${Status}\t${Version}\n'].lines.each do |line|
         pkg, arch, status, version = line.strip.split "\t"
         packages[pkg][arch] = [status, version]
