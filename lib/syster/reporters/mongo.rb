@@ -58,6 +58,8 @@ module Syster::Reporters
           k = '%'+k[1..-1] if k.start_with? '$'
           next [k, mongify(v)]
         end]
+      elsif Array === o
+        return o.collect {|i| mongify i}
       else
         return o
       end
