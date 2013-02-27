@@ -25,7 +25,7 @@ module Syster::Sources
       %x[dpkg-query -Wf '${Package}\t${Architecture}\t${Status}\t${Version}\n'].lines.each do |line|
         pkg, arch, status, version = line.strip.split "\t"
         packages[pkg] ||= {}
-        packages[pkg][arch] = [status, version]
+        packages[pkg][arch] = {:status => status, :version => version}
       end
 
       return [false, "exited with status #{$?.exitstatus}"] if $?.exitstatus != 0
