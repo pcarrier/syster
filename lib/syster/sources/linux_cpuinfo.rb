@@ -20,7 +20,9 @@ module Syster::Sources
         split("\n\n").collect do |cpu|
           Hash[
             cpu.split("\n").collect do |line|
-              line.split(/\t+: /)
+              k, v = line.split(/\t+: /)
+              next k, v.split(' ') if k == 'flags'
+              next k, v
             end
           ]
         end]
