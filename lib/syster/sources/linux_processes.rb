@@ -3,12 +3,55 @@ require 'scanf'
 
 module Syster::Sources
   class LinuxProcesses < Base
-    STAT_FORMAT = '%d %s %c %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d'
-    STAT_FIELDS = [:pid, :comm, :state, :ppid, :pgrp, :session, :tty_nr, :tpgid, :flags, :minflt,
-                   :cminflt, :majflt, :cmajflt, :utime, :stime, :cutime, :cstime, :priority, :nice, :unused,
-                   :itrealvalue, :starttime, :vsize, :rss, :rlim, :startcode, :endcode, :startstack, :kstkesp, :kstkeip,
-                   :signal, :blocked, :sigignore, :sigcatch, :wchan, :nswap, :cnswap, :exit_signal, :processor, :rt_priority,
-                   :policy, :delayacct_blkio_ticks, :guest_time, :cguest_time]
+    # From Linux man-pages 3.47
+    # Had to murder %l+[ud] into %f to help JSON & mongodb
+    STAT_SPECS = [[:pid, '%d'],
+                  [:comm, '%s'],
+                  [:state, '%c'],
+                  [:ppid, '%d'],
+                  [:pgrp, '%d'],
+                  [:session, '%d'],
+                  [:tty_nr, '%d'],
+                  [:tpgid, '%d'],
+                  [:flags, '%u'],
+                  [:minflt, '%f'],
+                  [:cminflt, '%f'],
+                  [:majflt, '%f'],
+                  [:cmajflt, '%f'],
+                  [:utime, '%f'],
+                  [:stime, '%f'],
+                  [:cutime, '%f'],
+                  [:cstime, '%f'],
+                  [:priority, '%f'],
+                  [:nice, '%f'],
+                  [:num_threads, '%f'],
+                  [:itrealvalue, '%f'],
+                  [:starttime, '%f'],
+                  [:vsize, '%f'],
+                  [:rss, '%f'],
+                  [:rsslim, '%f'],
+                  [:startcode, '%f'],
+                  [:endcode, '%f'],
+                  [:startstack, '%f'],
+                  [:kstkesp, '%f'],
+                  [:kstkeip, '%f'],
+                  [:signal, '%f'],
+                  [:blocked, '%f'],
+                  [:sigignore, '%f'],
+                  [:sigcatch, '%f'],
+                  [:wchan, '%f'],
+                  [:nswap, '%f'],
+                  [:cnswap, '%f'],
+                  [:exit_signal, '%d'],
+                  [:processor, '%d'],
+                  [:rt_priority, '%u'],
+                  [:policy, '%u'],
+                  [:delayacct_blkio_ticks, '%f'],
+                  [:guest_time, '%f'],
+                  [:cguest_time, '%f']]
+
+    STAT_FORMAT = STAT_SPECS.collect {|n,f| f}.join ' '
+    STAT_FIELDS = STAT_SPECS.collect {|n,f| n}
 
     def self.identifier
       'linux_processes'
@@ -35,8 +78,7 @@ module Syster::Sources
           end.join ' '
 
           comm = stat[:comm] ? stat[:comm][1..-2] : 'unknown'
-          stat[:comm] = comm
-          stat[:cmd] = cmd
+          stat[:cmd] = cmd unless cmd.empty?
 
           res[comm] ||= []
           res[comm] << stat
