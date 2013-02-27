@@ -3,6 +3,10 @@ require 'syster/helpers/puppet'
 
 module Syster::Sources
   class PuppetCatalog < Base
+    def self.identifier
+      'puppet_catalog'
+    end
+
     def self.runnable?
       Syster::Helpers::Require.can_require? %w[puppet json]
     end
