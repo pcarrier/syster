@@ -2,7 +2,7 @@ module Syster
   module Helpers
     module BootId
       def self.boot_id
-        if PLATFORM.end_with? 'linux'
+        if RUBY_PLATFORM.end_with? 'linux'
           @@BOOTID ||= File.read('/proc/sys/kernel/random/boot_id').strip
         else
           return nil
