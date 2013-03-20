@@ -99,7 +99,7 @@ module Syster::Reporters
     def get path
       resp = @conn.get path
       unless resp.status / 100 == 2 # 2XX
-          raise "POST #{path} failed with #{resp.status} (#{resp.body})"
+          raise "GET #{path} failed with #{resp.status} (#{resp.body})"
       end
       return resp.body
     end
