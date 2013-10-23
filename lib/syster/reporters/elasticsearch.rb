@@ -9,7 +9,7 @@ module Syster::Reporters
     def self.runnable?
       Syster::Helpers::Require.can_require? %w[faraday json]
     end
-  
+
     def initialize params={}
       require 'faraday'
       require 'json'
@@ -30,8 +30,7 @@ module Syster::Reporters
 
     def report identifier, payload
       # Missing in Ruby 1.8: #encode ::Encoding::UTF_8, :undef => :replace
-      @update[identifier] = ::Iconv.conv 'UTF-8//IGNORE', 'UTF-8',
-                                         ::JSON::dump(payload)
+      @update[identifier] = ::Iconv.conv 'UTF-8//IGNORE', 'UTF-8', ::JSON::dump(payload)
 
       if @dry.has_key? identifier
         @dry[identifier][:last_run] = Time.now.to_i
@@ -40,9 +39,11 @@ module Syster::Reporters
 
     def wants identifier, dry_payload
       unless @dry.has_key? identifier
-        @dry[identifier] = {'payload'    => nil,
-                            'last_dried' => 0,
-                            'last_run'   => 0}
+        @dry[identifier] = {
+          'payload'    => nil,
+          'last_dried' => 0,
+          'last_run'   => 0
+        }
       end
 
       orig = @dry[identifier]['payload']
@@ -52,7 +53,7 @@ module Syster::Reporters
 
       return orig != dry_payload
     end
-  
+
     def finish
       post_host_update
       post_dry_update
@@ -90,7 +91,7 @@ module Syster::Reporters
         req.body = payload
       end
       unless resp.status / 100 == 2 # 2XX
-          raise "POST #{path} failed with #{resp.status} (#{resp.body})"
+        raise "POST #{path} failed with #{resp.status} (#{resp.body})"
       end
       return resp.body
     end
@@ -99,7 +100,7 @@ module Syster::Reporters
     def get path
       resp = @conn.get path
       unless resp.status / 100 == 2 # 2XX
-          raise "GET #{path} failed with #{resp.status} (#{resp.body})"
+        raise "GET #{path} failed with #{resp.status} (#{resp.body})"
       end
       return resp.body
     end
