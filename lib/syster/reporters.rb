@@ -2,8 +2,8 @@ module Syster
   module Reporters
     def self.available
       unless defined? @@AVAILABLE
-        load_from_dir local_directory
         load_from_dir File.join(File.dirname(__FILE__), 'reporters')
+        load_from_dir local_directory
 
         @@AVAILABLE = Hash[constants.collect do |c|
           const_get c

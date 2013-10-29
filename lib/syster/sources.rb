@@ -2,8 +2,8 @@ module Syster
   module Sources
     def self.available
       unless defined? @@AVAILABLE
-        load_from_dir local_directory
         load_from_dir File.join(File.dirname(__FILE__), 'sources')
+        load_from_dir local_directory
 
         @@AVAILABLE = constants.collect do |c|
           const_get(c)
