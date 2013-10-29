@@ -22,6 +22,7 @@ module Syster::Sources
 
     private
     def jsonify aug, path
+      # undocumented need to escape ! in queries
       escaped = path.gsub '!', '\!'
 
       res = {}
@@ -29,31 +30,46 @@ module Syster::Sources
       value = aug.get escaped
       res['/value'] = value unless value.nil?
 
+      # discard comments
       children = aug.match "#{escaped}/*[label()!=\"#comment\"]"
+
       children.each_with_index do |cpath, index|
         type, index = parse_path cpath
         obj = jsonify aug, cpath
         obj['/index'] = index
+
         unless obj.size == 0
-          res[type] ||= []
-          res[type][index] = obj
+          if index
+            res[type] ||= []
+            res[type][index] = obj
+          else
+            res[type] = obj
+          end
         end
       end
 
       return res
     end
 
+    # returns a type, index singleton from a path
+    # - Common case:
+    #   '/foo/bar[1]' returns 'bar', 0
+    # - Unnamed entries:
+    #   '/foo/1' returns 'entries, 0
+    # - Unnumbered entries:
+    #   '/foo/bar' return 'bar', nil
     private
     def parse_path name
       base = File.basename name
-      case base
 
+      case base
       when /^\d+$/
-        return 'entry', (base.to_i - 1)
+        # 0-indexed
+        return 'entries', (base.to_i - 1)
       when /(.*)\[(\d+)\]/
         return $1, ($2.to_i - 1)
       else
-        return base, 0
+        return base, nil
       end
     end
   end
