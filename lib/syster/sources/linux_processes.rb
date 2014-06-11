@@ -55,6 +55,25 @@ module Syster::Sources
     STAT_FORMAT = STAT_SPECS.collect {|n,f| f}.join ' '
     STAT_FIELDS = STAT_SPECS.collect {|n,f| n}
 
+    LIMIT_FIELDS = [
+      :cpu,
+      :fsize,
+      :data,
+      :stack,
+      :core,
+      :rss,
+      :nproc,
+      :nofile,
+      :memlock,
+      :as,
+      :locks,
+      :sigpending,
+      :msgqueue,
+      :nice,
+      :rtprio,
+      :rttime
+    ]
+
     def self.identifier
       'linux_processes'
     end
@@ -65,7 +84,7 @@ module Syster::Sources
     end
 
     def collect
-      res = {}
+      res = Hash.new { |h,k| h[k] = [] }
 
       Dir.entries('/proc').each do |e|
         # skip non-process entries
@@ -83,7 +102,8 @@ module Syster::Sources
           stat[:cmd] = cmd unless cmd.empty?
           stat[:exe] = File.readlink("/proc/#{e}/exe")
 
-          res[comm] ||= []
+          stat[:limits] = process_limits File.read "/proc/#{e}/limits"
+
           res[comm] << stat
         rescue Errno::ENOENT
           # ignore processes disappearing under our feet
@@ -91,6 +111,19 @@ module Syster::Sources
       end
 
       return [true, res]
+    end
+
+    def unlimited_or_n string
+      string == 'unlimited' ? string : string.to_i
+    end
+
+    def process_limits raw
+      values = raw.lines.drop(1).collect do |l|
+        soft, hard = l.strip.split(/ {2,}/)[1,2]
+        [unlimited_or_n(soft), unlimited_or_n(hard)]
+      end
+
+      Hash[LIMIT_FIELDS.zip(values)]
     end
   end
 end
